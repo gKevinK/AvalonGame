@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from flask import Flask, session, render_template
+from flask import Flask, session, render_template, json
 
 app = Flask(__name__)
 
