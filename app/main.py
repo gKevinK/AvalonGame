@@ -3,7 +3,7 @@
 
 from flask import Flask, session, g, render_template, json
 
-from machine import Machine
+from machine import MachineControl
 
 app = Flask(__name__)
 
