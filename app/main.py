@@ -11,21 +11,23 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
+    if session['name']:
+        return render_template('game.html')
     return render_template('index.html')
-
-@app.route('/set_profile', methods=['POST'])
-def set_profile():
-    pass
 
 @app.route('/start_new', methods=['POST'])
 def start_new():
+    session['name'] = request.form['name']
+    if request.form['use_index']:
+        session['index'] = int(request.form['index'])
     rooms = get_rooms()
     room_num = random.randrange(0, 9999)
-    while rooms.has_key(room_num):
+    while room_num in rooms:
         room_num = random.randrange(0, 9999)
-    jsonObj = request.get_json()
-    num = jsonObj['player_num']
+    num = int(request.form['player_num'])
+    session['room_num'] = num
     rooms[room_num] = MachineControl(num)
+    return ''
 
 def get_rooms():
     rooms = getattr(g, 'rooms', None)
@@ -37,7 +39,7 @@ def get_rooms():
 def join():
     pass
 
+app.secret_key = 'A0Zr98w46yt&56ujt357/,?RT'
 
 if __name__ == '__main__':
     app.run(debug=True)
-

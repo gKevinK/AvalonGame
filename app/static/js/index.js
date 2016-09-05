@@ -1,6 +1,14 @@
 $('#start-btn').click(function() {
-    $.post('/start-new');
-    window.location.href = ''
+    $.post('/start_new', {
+        name: $('#name').val(),
+        player_num: $('#player-num').val(),
+        use_index: $('#use-index').is(':checked'),
+        index: $('#index').val()
+    }, function() {
+        alert('moew');
+        window.location.href = '/';
+    });
+    
 });
 
 $('#join-btn').click(function() {

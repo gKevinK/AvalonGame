@@ -37,7 +37,7 @@ class AvalonMachine(object):
         },
     }
     
-    def __init__(self, num, **args):
+    def __init__(self, num):
         self.mission_player_num = AvalonMachine.config['mission']
         roles = AvalonMachine.config['role'][num][:]
         random.shuffle(roles)
@@ -47,6 +47,9 @@ class AvalonMachine(object):
         self.status = 'make_team'
         self.current_round = 0
         self.current_try = 0
+        self.current_team = []
+        self.current_team_vote = []
+        self.current_task_vote = []
         self.mission_result = [-1] * 5
         self.mq = queue.Queue()
 
@@ -130,8 +133,8 @@ class AvalonMachine(object):
 
 class MachineControl(object):
     
-    def __init__(self, num, **args):
-        self.machine = AvalonMachine(num, **args)
+    def __init__(self, num):
+        self.machine = AvalonMachine(num)
         self.message_queues = [queue.Queue() for i in range(num)]
 
     
