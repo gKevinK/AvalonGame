@@ -1,72 +1,70 @@
-<!doctype html>
-<html lang="en">
+{% extends "layout.html" %}
 
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-  <title>阿瓦隆</title>
-
-  <link rel="stylesheet" href="../static/css/material.css">
-</head>
-
-<body>
-  <div class="mdl-layout__container">
-    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-      <header class="mdl-layout__header">
-        <div class="mdl-layout__header-row">
-          <span class="mdl-layout-title">阿瓦隆</span>
-
-          <div class="mdl-layout-spacer"></div>
-          <button id="more-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
-            <i class="material-icons">more_vert</i>
-          </button>
-          <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right mdl-js-ripple-effect" for="more-button">
-            <li disabled class="mdl-menu__item">About</li>
-          </ul>
-        </div>
-      </header>
-
-      <div class="mdl-layout__content">
-        
-        <div style="text-align: center">
-          <div class="mdl-card mdl-shadow--2dp">
-            <div class="mdl-card__title">
-              <h2 class="mdl-card__title-text">Welcome</h2>
-            </div>
-            <div class="mdl-card__supporting-text">
-              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" id="name">
-                <label class="mdl-textfield__label" for="name">昵称...</label>
-              </div>
-              <div class="mdl-textfield">
-                <select class="mdl-textfield__input">
-                  <option>5人局</option>
-                  <option>6人局</option>
-                  <option>7人局</option>
-                  <option>8人局</option>
-                  <option>9人局</option>
-                  <option>10人局</option>
-                </select>
-              </div>
-
-            </div>
-            <div class="mdl-card__actions mdl-card--border" style="text-align: center">
-              <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                开始新游戏
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
-          加入游戏
-        </button>
+{% block content %}        
+<div class="mdl-grid">
+  <div class="mdl-card mdl-cell mdl-cell--6-col mdl-cell--3-offset-desktop mdl-cell--1-offset-tablet mdl-shadow--2dp">
+    <div class="mdl-card__title">
+      <h2 class="mdl-card__title-text">Welcome</h2>
+    </div>
+    <div class="mdl-card__supporting-text">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" id="name">
+        <label class="mdl-textfield__label" for="name">昵称...</label>
+      </div>
+      <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="use-index">
+        <input type="checkbox" id="use-index" class="mdl-checkbox__input" checked>
+        <span class="mdl-checkbox__label">自动排序</span>
+      </label>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="index-field" style="display: none">
+        <input class="mdl-textfield__input" type="text" id="index" pattern="-?[0-9]*(\.[0-9]+)?">
+        <label class="mdl-textfield__label" for="index">序号...</label>
+        <span class="mdl-textfield__error">请输入数字</span>
       </div>
     </div>
   </div>
+</div>
 
-  <script src="../static/js/material.js"></script>
-</body>
+<div class="mdl-grid">
+  <div class="mdl-cell mdl-cell--3-col mdl-cell--6-col-phone mdl-cell--3-offset-desktop mdl-cell--1-offset-tablet mdl-card mdl-shadow--2dp">
+    <div class="mdl-card__supporting-text">
+      <div class="mdl-textfield">
+        <select class="mdl-textfield__input">
+          <option>5人局</option>
+          <option>6人局</option>
+          <option>7人局</option>
+          <option>8人局</option>
+          <option>9人局</option>
+          <option>10人局</option>
+        </select>
+      </div>
 
-</html>
+    </div>
+    <div class="mdl-card__actions" style="text-align: center">
+      <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect"
+        id="start-btn">
+        开始新游戏
+      </button>
+    </div>
+  </div>
+
+  <div class="mdl-cell mdl-cell--3-col mdl-cell--6-col-phone mdl-card mdl-shadow--2dp">
+    <div class="mdl-card__supporting-text">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" id="room-num" pattern="-?[0-9]*(\.[0-9]+)?">
+        <label class="mdl-textfield__label" for="room-num">房间号...</label>
+        <span class="mdl-textfield__error">请输入数字</span>
+      </div>
+
+    </div>
+    <div class="mdl-card__actions" style="text-align: center">
+      <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="join-btn">
+        加入游戏
+      </button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block script %}
+<script src="/static/js/index.js"></script>
+{% endblock %}

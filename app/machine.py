@@ -123,7 +123,7 @@ class AvalonMachine(object):
     def is_mission_success(self, bad_vote_num):
         if (bad_vote_num == 0):
             return True
-        elif (self.player_num >= 7 && self.current_round == 4 && bad_vote_num <= 1):
+        elif (self.player_num >= 7 and self.current_round == 4 and bad_vote_num <= 1):
             return True
         else:
             return False

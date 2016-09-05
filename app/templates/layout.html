@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <title>阿瓦隆</title>
 
-  <link rel="stylesheet" href="../static/css/material.css">
+  <link rel="stylesheet" href="/static/css/material.css">
   {% block head %}{% endblock %}
 </head>
 
@@ -23,6 +23,7 @@
             <i class="material-icons">more_vert</i>
           </button>
           <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right mdl-js-ripple-effect" for="more-button">
+            <li hidden disabled class="mdl-menu__item">Revert a Mission</li>
             <li disabled class="mdl-menu__item">About</li>
           </ul>
         </div>
@@ -36,7 +37,8 @@
     </div>
   </div>
 
-  <script src="../static/js/material.js"></script>
+  <script src="/static/js/material.js"></script>
+  <script src="/static/js/jquery.js"></script>
   {% block script %}{% endblock %}
 </body>
 
