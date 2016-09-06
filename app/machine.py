@@ -3,7 +3,6 @@
 
 import random
 import queue
-import json
 from enum import Enum
 
 class Role(Enum):
@@ -55,7 +54,7 @@ class AvalonMachine(object):
 
         print("New game starting...")
         for i in range(num):
-            print(i, self.players[i])
+            print(i, self.players[i].name)
 
     def get_roles(self):
         return self.players[:]
@@ -134,7 +133,29 @@ class AvalonMachine(object):
 class MachineControl(object):
     
     def __init__(self, num):
+        self.player_num = num
         self.machine = AvalonMachine(num)
         self.message_queues = [queue.Queue() for i in range(num)]
+        self.player_status = [0] * num
+
+    def register(self, player_id = -1):
+        if (player_id == -1):
+            random_list = list(range(self.player_num))
+            random.shuffle(random_list)
+            for i in random_list:
+                if self.player_status[i] == 0:
+                    self.player_status[i] = 1
+                    return i
+            return -1
+        else:
+            if player_id < 0 or player_id >= self.player_num:
+                raise Exception('Player id error.')
+            self.player_status[player_id] = 1
+            return player_id
+
+    def unregister(self, player_id):
+        if player_id < 0 or player_id >= self.player_num:
+            raise Exception('Player id error.')
+        self.player_status[player_id] = 0
 
     
