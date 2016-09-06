@@ -158,4 +158,11 @@ class MachineControl(object):
             raise Exception('Player id error.')
         self.player_status[player_id] = 0
 
+    def get_init_info(self, player_id):
+        init_info = self.machine.init_notify(player_id)
+        init_info['type'] = 'init_info'
+        return init_info
+
+    def get_message_queue(self, player_id):
+        return self.message_queues[player_id]
     

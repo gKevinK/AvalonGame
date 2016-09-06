@@ -6,7 +6,7 @@ $('#start-btn').click(function() {
     $.post('/start_new', {
         name: $('#name').val(),
         player_num: $('#player-num').val(),
-        use_id: $('#use-index').is(':checked'),
+        use_id: !($('#use-index').is(':checked')),
         player_id: $('#index').val()
     }, function(data) {
         if (data === '') {
@@ -25,7 +25,7 @@ $('#join-btn').click(function() {
     $.post('/join', {
         name: $('#name').val(),
         room_num: $('#room-num').val(),
-        use_id: $('#use-index').is(':checked'),
+        use_id: !($('#use-index').is(':checked')),
         player_id: $('#index').val()
     }, function(data) {
         window.location.href = '/';

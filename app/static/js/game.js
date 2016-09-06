@@ -6,3 +6,10 @@ $('#exit').click(function() {
     });
 });
 
+$(document).ready(function() {
+    $.get('/game/init', function(data) {
+        init_info = JSON.parse(data);
+        alert(data);
+    });
+});
+
