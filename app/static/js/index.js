@@ -24,7 +24,7 @@ $('#join-btn').click(function() {
     }
     $.post('/join', {
         name: $('#name').val(),
-        room_num: $('#room-num').val(),
+        room_id: $('#room-num').val(),
         use_id: !($('#use-index').is(':checked')),
         player_id: $('#index').val()
     }, function(data) {

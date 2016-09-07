@@ -1,20 +1,111 @@
 {% extends "layout.html" %}
 
+{% block head %}
+<style type="text/css">
+
+</style>
+{% endblock %}
+
 {% block header %}
 <h5 style="padding-left: 8px">{{ room_id }}</h5>
 {% endblock %}
 
 {% block menu_item %}
-<li class="mdl-menu__item" id="exit">Exit</li>
+<li class="mdl-menu__item" id="role">身份</li>
+<li class="mdl-menu__item--full-bleed-divider"></li>
+<li class="mdl-menu__item" id="exit">退出</li>
 {% endblock %}
 
 {% block content %}        
 <div class="mdl-grid">
-  <h4>喵</h4>
+  <h5>喵</h5>
   <button class="mdl-button mdl-button--colored" id="test-message">测试</button>
+</div>
+<div id="message-box">
+</div>
+
+<div class="mdl-grid">
+  <div class="mdl-card mdl-shadow--2dp" id="make-team-panel">
+    <div class="mdl-card__title">
+      <div class="mdl-card__title-text">
+        <h5>选择组队人选</h5>
+      </div>
+    </div>
+    <div class="mdl-card__supporting-text" id="make-team-field">
+      <p>填编号，别瞎填，坏了不好整</p>
+    </div>
+    <div class="mdl-card__actions">
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect"
+          id="make-team-btn">
+          确定
+        </button>
+      </div>
+  </div>
+
+  <div class="mdl-card mdl-shadow--2dp" id="team-vote-panel">
+    <div class="mdl-card__title">
+      <div class="mdl-card__title-text">
+        <h5>是否赞同此次组队？</h5>
+      </div>
+    </div>
+    <div class="mdl-card__supporting-text" id="team-vote-field">
+      <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="team-vote-1">
+        <input type="radio" id="team-vote-1" class="mdl-radio__button" name="team-vote" value="1">
+        <span class="mdl-radio__label">同意</span>
+      </label>
+      <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="team-vote-0">
+        <input type="radio" id="team-vote-0" class="mdl-radio__button" name="team-vote" value="0" checked>
+        <span class="mdl-radio__label">反对</span>
+      </label>
+    </div>
+    <div class="mdl-card__actions">
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect"
+          id="team-vote-btn">
+          确定
+        </button>
+      </div>
+  </div>
+
+  <div class="mdl-card mdl-shadow--2dp" id="task-vote-panel">
+    <div class="mdl-card__title">
+      <div class="mdl-card__title-text">
+        <h5>任务成功/失败？</h5>
+      </div>
+    </div>
+    <div class="mdl-card__supporting-text" id="task-vote-field">
+      <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="task-vote-1">
+        <input type="radio" id="task-vote-1" class="mdl-radio__button" name="task-vote" value="1" checked>
+        <span class="mdl-radio__label">成功</span>
+      </label>
+      <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="task-vote-0">
+        <input type="radio" id="task-vote-0" class="mdl-radio__button" name="task-vote" value="0">
+        <span class="mdl-radio__label">失败</span>
+      </label>
+    </div>
+    <div class="mdl-card__actions">
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect"
+          id="task-vote-btn">
+          确定
+        </button>
+      </div>
+  </div>
 </div>
 {% endblock %}
 
 {% block script %}
+<dialog class="mdl-dialog" hidden>
+  <div class="mdl-dialog__title">
+    <h5>我是提示...</h5>
+  </div>
+  <div class="mdl-dialog__content">
+    <p>
+      我是提示...
+    </p>
+  </div>
+  <div class="mdl-dialog__actions">
+    <button type="button" class="mdl-button close">确定</button>
+  </div>
+</dialog>
+
 <script src="/static/js/game.js"></script>
 {% endblock %}

@@ -20,11 +20,12 @@ def index():
 @app.route('/start_new', methods=['POST'])
 def start_new():
     try:
-        session['name'] = request.form['name']
+        name = request.form['name']
+        session['name'] = name
         rooms = get_rooms()
-        room_id = random.randrange(1000, 9999)
+        room_id = random.randrange(10, 99)
         while room_id in rooms:
-            room_id = random.randrange(1000, 9999)
+            room_id = random.randrange(10, 99)
         player_num = int(request.form['player_num'])
         mc = MachineControl(player_num)
         print('Room ' + str(room_id) + ' established.')
@@ -34,17 +35,17 @@ def start_new():
             if player_id == -1:
                 return 'Player_id invalid.'
             session['player_id'] = player_id
-            mc.register(player_id)
+            mc.register(name, player_id)
         else:
-            session['player_id'] = mc.register()
+            session['player_id'] = mc.register(name)
         print('Room ' + str(room_id) + ', Player ' + str(session['player_id'])
             + ', ' + session['name'] + ' joined.')
         session['room_id'] = room_id
         return ''
     except Exception as e:
         print(e)
-        return 'error'
-        # raise e
+        # return 'error'
+        raise e
 
 def get_rooms():
     rooms = getattr(app, 'rooms', None)
@@ -55,7 +56,8 @@ def get_rooms():
 @app.route('/join', methods=['POST'])
 def join():
     try:
-        session['name'] = request.form['name']
+        name = request.form['name']
+        session['name'] = name
         rooms = get_rooms()
         room_id = int(request.form['room_id'])
         if room_id not in rooms:
@@ -66,9 +68,9 @@ def join():
             if player_id == -1:
                 return 'Player id invalid.'
             session['player_id'] = player_id
-            mc.register(player_id)
+            mc.register(name, player_id)
         else:
-            session['player_id'] = mc.register()
+            session['player_id'] = mc.register(name)
         print('Room ' + str(room_id) + ', Player ' + str(session['player_id'])
             + ', ' + session['name'] + ' joined.')
         session['room_id'] = room_id
@@ -116,7 +118,9 @@ def game_comet():
 def game_action():
     if request.form['action'] == 'message':
         room = get_rooms()[session['room_id']]
-        room.message(request.form['content'])
+        room.message({
+            'sender': session['player_id'],
+            'content': request.form['content'] })
     return ''
 
 @app.route('/exit', methods=['POST'])

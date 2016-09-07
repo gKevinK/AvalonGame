@@ -10,10 +10,18 @@ class Role(Enum):
     Percival = 1
     Loyalist = 2
     Assassin = 3
-    Morgana= 4
-    Modred = 5
+    Morgana = 4
+    Mordred = 5
     Oberon = 6
     Minion = 7
+
+class Status(Enum):
+    wait = 0
+    make_team = 1
+    team_vote = 2
+    task_vote = 3
+    assassin = 4
+    end = 5
 
 class AvalonMachine(object):
 
@@ -36,28 +44,25 @@ class AvalonMachine(object):
         },
     }
     
-    def __init__(self, num):
+    def __init__(self, num, controller):
         self.mission_player_num = AvalonMachine.config['mission']
         roles = AvalonMachine.config['role'][num][:]
         random.shuffle(roles)
         self.players = [Role(i) for i in roles]
         self.player_num = num
+        self.controller = controller
 
-        self.status = 'make_team'
+        self.status = Status.wait
         self.current_round = 0
         self.current_try = 0
         self.current_team = []
         self.current_team_vote = []
         self.current_task_vote = []
         self.mission_result = [-1] * 5
-        self.mq = queue.Queue()
 
         print("New game starting...")
         for i in range(num):
             print(i, self.players[i].name)
-
-    def get_roles(self):
-        return self.players[:]
     
     def init_notify(self, player):
         content = []
@@ -69,30 +74,46 @@ class AvalonMachine(object):
             for i in range(self.player_num):
                 if self.players[i] in [Role.Merlin, Role.Morgana]:
                     content.append(i)
-        elif self.players[player] in [Role.Morgana, Role.Assassin, Role.Modred, Role.Minion]:
+        elif self.players[player] in [Role.Morgana, Role.Assassin, Role.Mordred, Role.Minion]:
             for i in range(self.player_num):
-                if self.players[i] in [Role.Morgana, Role.Assassin, Role.Modred, Role.Minion]:
+                if self.players[i] in [Role.Morgana, Role.Assassin, Role.Mordred, Role.Minion]:
                     content.append(i)
-        return { 'role': self.players[player].value, 'target': player, 'content': content }
+        return { 'role': self.players[player].value, 'player_num': self.player_num, 'content': content }
 
     def make_team(self, player_list):
         self.current_try += 1
         self.current_team = player_list
         self.current_team_vote = [-1] * self.player_num
-        self.status = 'team_vote'
+        self.status = Status.team_vote
+        self.controller.notify([], {
+            'type': 'team-vote',
+            'content': self.current_team
+        })
 
     def team_vote(self, player, agree):
         self.current_team_vote[player] = 1 if agree else 0
         if -1 not in self.current_team_vote:
             if self.current_team_vote.count(1) > self.player_num // 2:
                 self.current_task_vote = [-1] * self.mission_player_num[self.current_round]
-                self.status = 'task_vote'
+                self.status = Status.task_vote
+                self.controller.notify(self.current_team, {
+                    'type': 'task-vote',
+                })
             else:
                 if self.current_try == 5:
+                    self.controller.notify([], {
+                        'type': 'mission-result',
+                        'result': False,
+                        'good_vote_num': 0,
+                        'bad_vote_num': 0
+                    })
                     self.task_end(False)
                 else:
                     self.current_try += 1
-                    self.status = 'make_team'
+                    self.status = Status.make_team
+                    self.controller.notify([], {
+                        'type': 'make-team'
+                    })
 
     def task_vote(self, player, success):
         self.current_task_vote[player] = 1 if success else 0
@@ -100,18 +121,36 @@ class AvalonMachine(object):
             good_vote_num = self.current_task_vote.count(1)
             bad_vote_num = self.current_task_vote.count(0)
             result = self.is_mission_success(bad_vote_num)
+            self.controller.notify([], {
+                'type': 'mission-result',
+                'result': result,
+                'good_vote_num': good_vote_num,
+                'bad_vote_num': bad_vote_num
+            })
             self.task_end(result)
 
     def task_end(self, success):
         self.mission_result[self.current_round] = 1 if success else 0
         if self.mission_result.count(1) == 3:
-            self.status = 'assassin'
+            self.status = Status.assassin
+            self.controller.notify([self.players.index(Role.Assassin)], {
+                'type': 'assassin',
+            })
         elif self.mission_result.count(0) == 3:
-            self.status = 'end'
+            self.status = Status.end
+            self.controller.notify([], {
+                'type': 'end',
+                'result': False,
+                'roles': [r.value for r in self.players]
+            })
 
     def assassin(self, target):
-        self.status = 'end'
-        return self.players[target] == 'Merlin'
+        self.status = Status.end
+        self.controller.notify([], {
+            'type': 'end',
+            'result': self.players[target] == Role.Merlin,
+            'roles': [r.value for r in self.players]
+        })
 
     def undo(self):
         if self.current_try > 0:
@@ -120,7 +159,10 @@ class AvalonMachine(object):
             self.current_round -= 1
             self.mission_result[self.current_round] = -1
             self.current_try = 4
-        self.status = 'make_team'
+        self.status = Status.make_team
+        self.controller.notify([], {
+            'type': 'make-team'
+        })
 
     def is_mission_success(self, bad_vote_num):
         if (bad_vote_num == 0):
@@ -130,28 +172,53 @@ class AvalonMachine(object):
         else:
             return False
 
+class Player(object):
+
+    def __init__(self, player_id, name):
+        self.mqueue = queue.Queue()
+        self.player_id = player_id
+        self.name = name
+
 class MachineControl(object):
     
     def __init__(self, num):
         self.player_num = num
-        self.machine = AvalonMachine(num)
-        self.message_queues = [queue.Queue() for i in range(num)]
+        self.machine = AvalonMachine(num, self)
+        self.players = [Player(i, 'unknown') for i in range(num)]
         self.player_status = [0] * num
 
-    def register(self, player_id = -1):
+    def register(self, name, player_id = -1):
         if (player_id == -1):
             random_list = list(range(self.player_num))
             random.shuffle(random_list)
             for i in random_list:
                 if self.player_status[i] == 0:
-                    self.player_status[i] = 1
-                    return i
-            return -1
+                    player_id = i
+                    break
         else:
             if player_id < 0 or player_id >= self.player_num:
                 raise Exception('Player id error.')
-            self.player_status[player_id] = 1
-            return player_id
+        self.player_status[player_id] = 1
+        self.players[player_id].name = name
+        self.notify([], {
+            'type': 'register',
+            'player_id': player_id,
+            'name': name
+        })
+        if self.player_status.count(0) == 0:
+            self.start()
+        return player_id
+
+    def start(self):
+        self.machine.status = Status.make_team
+        self.notify([], {
+            'type': 'player-info',
+            'content': [p.name for p in self.players]
+        })
+        self.notify([], {
+            'type': 'make-team',
+            'num': self.machine.mission_player_num[self.machine.current_round]
+        })
 
     def unregister(self, player_id):
         if player_id < 0 or player_id >= self.player_num:
@@ -164,7 +231,7 @@ class MachineControl(object):
         return init_info
 
     def get_mq(self, player_id):
-        return self.message_queues[player_id]
+        return self.players[player_id].mqueue
     
     def notify(self, player_list, content):
         if player_list == []:
@@ -173,4 +240,13 @@ class MachineControl(object):
             self.get_mq(i).put_nowait(content)
     
     def message(self, content):
+        content['type'] = 'message'
         self.notify([], content)
+    
+    def team_vote(self, player_id, agree):
+        self.machine.team_vote(player_id, agree)
+        self.notify([], {
+            'type': 'vote',
+            'player_id': player_id
+        })
+
