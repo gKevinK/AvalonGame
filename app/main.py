@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import random
-import time
+import queue
 from flask import Flask, request, session, render_template, json, redirect
 
 from machine import MachineControl
@@ -100,12 +100,17 @@ def game_init():
 def game_comet():
     room = get_rooms()[session['room_id']]
     mqueue = room.get_mq(session['player_id'])
-    for i in range(appconfig.COMET_TIMEOUT):
-        if not mqueue.empty():
-            m = mqueue.get_nowait()
-            return m if isinstance(m, str) else json.jsonify(m)
-        time.sleep(appconfig.COMET_POLL_TIME)
-    return ''
+    try:
+        m = mqueue.get(timeout=appconfig.COMET_TIMEOUT)
+        return m if isinstance(m, str) else json.jsonify(m)
+    except queue.Empty:
+        return ''
+    # for i in range(appconfig.COMET_TIMEOUT):
+    #     if not mqueue.empty():
+    #         m = mqueue.get_nowait()
+    #         return m if isinstance(m, str) else json.jsonify(m)
+    #     time.sleep(appconfig.COMET_POLL_TIME)
+    # return ''
 
 @app.route('/game/action', methods=['POST'])
 def game_action():
