@@ -10,7 +10,7 @@ $('#start-btn').click(function() {
         player_id: $('#index').val()
     }, function(data) {
         if (data === '') {
-            window.location.href = '/';
+            window.location.href = '/game';
         } else {
             alert('失败了...\n\n' + data);
         }
@@ -28,7 +28,11 @@ $('#join-btn').click(function() {
         use_id: !($('#use-index').is(':checked')),
         player_id: $('#index').val()
     }, function(data) {
-        window.location.href = '/';
+        if (data === '') {
+            window.location.href = '/game';
+        } else {
+            alert('失败了...\n\n' + data);
+        }
     });
 });
 

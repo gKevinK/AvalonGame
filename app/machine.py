@@ -163,6 +163,14 @@ class MachineControl(object):
         init_info['type'] = 'init_info'
         return init_info
 
-    def get_message_queue(self, player_id):
+    def get_mq(self, player_id):
         return self.message_queues[player_id]
     
+    def notify(self, player_list, content):
+        if player_list == []:
+            player_list = list(range(self.player_num))
+        for i in player_list:
+            self.get_mq(i).put_nowait(content)
+    
+    def message(self, content):
+        self.notify([], content)
