@@ -259,6 +259,9 @@ class MachineControl(object):
         content['type'] = 'message'
         self.notify([], content)
     
+    def make_team(self, player_id, team_list):
+        self.machine.make_team(player_id, team_list)
+
     def team_vote(self, player_id, agree):
         self.machine.team_vote(player_id, agree)
         self.notify([], {

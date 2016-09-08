@@ -125,7 +125,7 @@ def game_action():
             'sender': pid,
             'content': request.form['content'] })
     elif request.form['action'] == 'make-team':
-        room.make_team(pid, request.form['content'])
+        room.make_team(pid, json.loads(request.form['content'])['list'])
     elif request.form['action'] == 'team-vote':
         room.team_vote(pid, int(request.form['content']))
     elif request.form['action'] == 'task-vote':

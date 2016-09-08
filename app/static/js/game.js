@@ -38,7 +38,7 @@ function init() {
         info.known_player = content
         for (var i = 0; i < info.player_num; i += 1) {
             $('#make-team-field').append('<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="make-team-0">'
-                + '<input type="checkbox" id="make-team-' + i + '" class="mdl-checkbox__input team-select">'
+                + '<input type="checkbox" id="make-team-' + i + '" class="mdl-checkbox__input team-select" value="' + i + '">'
                 + '<span class="mdl-checkbox__label">' + (i + 1) + '</span>'
                 + '</label>');
         }
@@ -81,10 +81,12 @@ function add_message(sender, content) {
 
 $('#make-team-btn').click(function() {
     $('#make-team-panel').slideUp();
-    content = $('.team-select:checked').
+    var content = $('.team-select:checked').map(function() {
+        return this.value;
+    });
     $.post('/game/action', {
         action: 'make-team',
-        content: []
+        content: JSON.stringify({ list: content })
     });
 })
 
