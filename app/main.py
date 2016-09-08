@@ -50,6 +50,7 @@ def start_new():
 def get_rooms():
     rooms = getattr(app, 'rooms', None)
     if rooms is None:
+        print('***')
         rooms = app.rooms = {}
     return rooms
 
@@ -59,6 +60,7 @@ def join():
         name = request.form['name']
         session['name'] = name
         rooms = get_rooms()
+        print(rooms.keys())
         room_id = int(request.form['room_id'])
         if room_id not in rooms:
             return 'This room don\'t exist.'
@@ -77,8 +79,8 @@ def join():
         return ''
     except Exception as e:
         print(e)
-        return 'error'
-        # raise e
+        # return 'error'
+        raise e
 
 @app.route('/game')
 def game():
@@ -116,11 +118,20 @@ def game_comet():
 
 @app.route('/game/action', methods=['POST'])
 def game_action():
+    room = get_rooms()[session['room_id']]
+    pid = session['player_id']
     if request.form['action'] == 'message':
-        room = get_rooms()[session['room_id']]
         room.message({
-            'sender': session['player_id'],
+            'sender': pid,
             'content': request.form['content'] })
+    elif request.form['action'] == 'make-team':
+        room.make_team(pid, request.form['content'])
+    elif request.form['action'] == 'team-vote':
+        room.team_vote(pid, int(request.form['content']))
+    elif request.form['action'] == 'task-vote':
+        room.task_vote(pid, int(request.form['content']))
+    elif request.form['action'] == 'assassin':
+        room.assasin(pid, int(request.form['content']))
     return ''
 
 @app.route('/exit', methods=['POST'])

@@ -38,9 +38,9 @@ $('#join-btn').click(function() {
 
 $('#use-index').click(function() {
     if ($('#use-index').is(':checked')) {
-        $('#index-field').hide();
+        $('#index-field').slideUp();
     } else {
-        $('#index-field').show();
+        $('#index-field').slideDown();
     }
 });
 

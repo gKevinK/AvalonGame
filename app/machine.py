@@ -45,7 +45,7 @@ class AvalonMachine(object):
     }
     
     def __init__(self, num, controller):
-        self.mission_player_num = AvalonMachine.config['mission']
+        self.mission_player_num = AvalonMachine.config['mission'][num]
         roles = AvalonMachine.config['role'][num][:]
         random.shuffle(roles)
         self.players = [Role(i) for i in roles]
@@ -78,7 +78,10 @@ class AvalonMachine(object):
             for i in range(self.player_num):
                 if self.players[i] in [Role.Morgana, Role.Assassin, Role.Mordred, Role.Minion]:
                     content.append(i)
-        return { 'role': self.players[player].value, 'player_num': self.player_num, 'content': content }
+        return {
+            'role': self.players[player].value,
+            'player_num': self.player_num,
+            'content': content }
 
     def make_team(self, player_list):
         self.current_try += 1
@@ -93,6 +96,10 @@ class AvalonMachine(object):
     def team_vote(self, player, agree):
         self.current_team_vote[player] = 1 if agree else 0
         if -1 not in self.current_team_vote:
+            self.controller.notify([], {
+                'type': 'team-result',
+                'content': self.current_team_vote
+            })
             if self.current_team_vote.count(1) > self.player_num // 2:
                 self.current_task_vote = [-1] * self.mission_player_num[self.current_round]
                 self.status = Status.task_vote
@@ -112,11 +119,12 @@ class AvalonMachine(object):
                     self.current_try += 1
                     self.status = Status.make_team
                     self.controller.notify([], {
-                        'type': 'make-team'
+                        'type': 'make-team',
+                        'num': self.mission_player_num[self.current_round]
                     })
 
     def task_vote(self, player, success):
-        self.current_task_vote[player] = 1 if success else 0
+        self.current_task_vote[player] = success
         if -1 not in self.current_task_vote:
             good_vote_num = self.current_task_vote.count(1)
             bad_vote_num = self.current_task_vote.count(0)
@@ -143,6 +151,13 @@ class AvalonMachine(object):
                 'result': False,
                 'roles': [r.value for r in self.players]
             })
+        else:
+            self.current_round += 1
+            self.status = Status.make_team
+            self.controller.notify([], {
+                'type': 'make-team',
+                'num': self.mission_player_num[self.current_round]
+            })
 
     def assassin(self, target):
         self.status = Status.end
@@ -161,7 +176,8 @@ class AvalonMachine(object):
             self.current_try = 4
         self.status = Status.make_team
         self.controller.notify([], {
-            'type': 'make-team'
+            'type': 'make-team',
+            'num': self.mission_player_num[self.current_round]
         })
 
     def is_mission_success(self, bad_vote_num):
@@ -205,7 +221,7 @@ class MachineControl(object):
             'player_id': player_id,
             'name': name
         })
-        if self.player_status.count(0) == 0:
+        if self.player_status.count(0) == 0 and self.machine.status == Status.wait:
             self.start()
         return player_id
 
@@ -250,3 +266,16 @@ class MachineControl(object):
             'player_id': player_id
         })
 
+    def task_vote(self, player_id, success):
+        if player_id not in self.machine.current_team:
+            return
+        self.machine.task_vote(player_id, success)
+        self.notify([], {
+            'type': 'vote',
+            'player_id': player_id
+        })
+    
+    def assassin(self, player_id, target):
+        if self.machine.players[player_id] is not Role.Assassin:
+            return
+        self.machine.assassin(target)
