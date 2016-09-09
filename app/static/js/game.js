@@ -11,7 +11,19 @@ var config = {
     }
 }
 
-var info = {}
+var info = {
+    role: '',
+    role_name: 'unknown',
+    player_id: '',
+    player_num: '',
+    known_player: [],
+
+    current_status: 'wait',
+    current_round: 0,
+    current_try: 0,
+    current_team: [],
+    mission_player_num: []
+}
 
 $('#exit').click(function() {
     $.post('/exit', {
@@ -23,6 +35,7 @@ $('#exit').click(function() {
 
 $(document).ready(function() {
     $('.action-panel').hide();
+    $('#action-panel-grid').show();
     setTimeout(init, 100);
 });
 
@@ -36,12 +49,12 @@ function init() {
         info.player_id = data['player_id'] + 1;
         info.player_num = data['player_num'];
         info.known_player = content
-        for (var i = 0; i < info.player_num; i += 1) {
-            $('#make-team-field').append('<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="make-team-0">'
-                + '<input type="checkbox" id="make-team-' + i + '" class="mdl-checkbox__input team-select" value="' + i + '">'
-                + '<span class="mdl-checkbox__label">' + (i + 1) + '</span>'
-                + '</label>');
-        }
+        $('.team-select').map(function() {
+            if (parseInt(this.value) >= info.player_num) {
+                $(this).parent().remove();
+            }
+        })
+        // $.parser.parse($('#make-team-field'));
         alert('我的身份：' + info.role_name + '\n\n'
             + '我的次序：' + info.player_id + '号\n\n'
             + '看到的玩家：'　+ info.known_player.join('，'));
@@ -56,19 +69,29 @@ function comet() {
         if (data['type'] == 'message') {
             $('#message-box').append('<div>Player ' + (data['sender'] + 1) + ": " + data['content'] + '</div>');
         } else if (data['type'] == 'player_info') {
-            
+            $('#message-box').append('<div>' + data['content'] + '</div>');
         } else if (data['type'] == 'register') {
             $('#message-box').append('<div>Player ' + (data['player_id'] + 1) + ": " + data['name'] + ' 已加入。</div>');
         } else if (data['type'] == 'make-team') {
             $('#make-team-panel').show();
-            alert(data['num']);
+            $('#message-box').append('<div>队伍人数: ' + data['num'] + '</div>');
         } else if (data['type'] == 'team-vote') {
+            $('#make-team-panel').hide();
             $('#team-vote-panel').show();
+            $('#message-box').append(JSON.stringify(data));//
         } else if (data['type'] == 'task-vote') {
             $('#task-vote-panel').show();
+        } else if (data['type'] == 'vote') {
+            $('#message-box').append('<div>Player ' + (data['player_id'] + 1) + ' 已投票。</div>');
         } else if (data['type'] == 'mission-result') {
             var res = data['result'] ? '成功' : '失败';
             $('#message-box').append('<div>任务' + res + '，' + data['bad_vote_num'] + ' 张失败票。</div>');
+        } else if (data['type'] == 'end') {
+            var c = '';
+            if (data['result'] == true) { c = '好人获胜'; }
+            else { c = '坏人获胜'; }
+            c += data['roles'].map(function() { return config.Role[this]; });
+            alert(c);
         } else {
             $('#message-box').append('<div>' + JSON.stringify(data) + '</div>');
         }
@@ -81,8 +104,9 @@ function add_message(sender, content) {
 
 $('#make-team-btn').click(function() {
     $('#make-team-panel').slideUp();
-    var content = $('.team-select:checked').map(function() {
-        return this.value;
+    var content = [];
+    $('.team-select:checked').map(function() {
+        content.push(parseInt(this.value));
     });
     $.post('/game/action', {
         action: 'make-team',
@@ -91,7 +115,7 @@ $('#make-team-btn').click(function() {
 })
 
 $('#team-vote-btn').click(function() {
-    $('#team-vote-panel').hide();
+    $('#team-vote-panel').slideUp();
     vote = $('input[name="team-vote"]:checked').val();
     $.post('/game/action', {
         action: 'team-vote',
@@ -99,8 +123,8 @@ $('#team-vote-btn').click(function() {
     });
 })
 
-$('#task-vote').click(function() {
-    $('#task-vote-panel').hide();
+$('#task-vote-btn').click(function() {
+    $('#task-vote-panel').slideUp();
     vote = $('input[name="task-vote"]:checked').val();
     $.post('/game/action', {
         action: 'task-vote',

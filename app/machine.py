@@ -124,7 +124,7 @@ class AvalonMachine(object):
                     })
 
     def task_vote(self, player, success):
-        self.current_task_vote[player] = success
+        self.current_task_vote[self.current_team.index(player)] = success
         if -1 not in self.current_task_vote:
             good_vote_num = self.current_task_vote.count(1)
             bad_vote_num = self.current_task_vote.count(0)
@@ -260,23 +260,23 @@ class MachineControl(object):
         self.notify([], content)
     
     def make_team(self, player_id, team_list):
-        self.machine.make_team(player_id, team_list)
+        self.machine.make_team(team_list)
 
     def team_vote(self, player_id, agree):
-        self.machine.team_vote(player_id, agree)
         self.notify([], {
             'type': 'vote',
             'player_id': player_id
         })
+        self.machine.team_vote(player_id, agree)
 
     def task_vote(self, player_id, success):
         if player_id not in self.machine.current_team:
             return
-        self.machine.task_vote(player_id, success)
         self.notify([], {
             'type': 'vote',
             'player_id': player_id
         })
+        self.machine.task_vote(player_id, success)
     
     def assassin(self, player_id, target):
         if self.machine.players[player_id] is not Role.Assassin:
