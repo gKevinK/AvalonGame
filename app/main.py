@@ -23,9 +23,9 @@ def start_new():
         name = request.form['name']
         session['name'] = name
         rooms = get_rooms()
-        room_id = random.randrange(10, 99)
+        room_id = random.randrange(1000, 9999)
         while room_id in rooms:
-            room_id = random.randrange(10, 99)
+            room_id = random.randrange(1000, 9999)
         player_num = int(request.form['player_num'])
         mc = MachineControl(player_num)
         print('Room ' + str(room_id) + ' established.')
@@ -121,7 +121,8 @@ def game_action():
     room = get_rooms()[session['room_id']]
     pid = session['player_id']
     if request.form['action'] == 'message':
-        room.message({
+        room.notify([], {
+            'type': 'message',
             'sender': pid,
             'content': request.form['content'] })
     elif request.form['action'] == 'make-team':

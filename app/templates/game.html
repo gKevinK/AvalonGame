@@ -131,6 +131,62 @@
       确定
     </button>
   </div>
+
+  <div class="mdl-card mdl-shadow--2dp action-panel mdl-grid" id="assassin-panel">
+    <div>
+      <div class="mdl-card__title">
+        <p class="panel-title">选择刺杀目标：</p>
+      </div>
+      <div class="mdl-card__supporting-text" id="assassin-field">
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="assassin-0">
+          <input type="radio" id="assassin-0" class="mdl-radio__button" name="assassin-select" value="0">
+          <span class="mdl-radio__label">1</span>
+        </label>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="assassin-1">
+          <input type="radio" id="assassin-1" class="mdl-radio__button" name="assassin-select" value="1">
+          <span class="mdl-radio__label">2</span>
+        </label>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="assassin-2">
+          <input type="radio" id="assassin-2" class="mdl-radio__button" name="assassin-select" value="2">
+          <span class="mdl-radio__label">3</span>
+        </label>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="assassin-3">
+          <input type="radio" id="assassin-3" class="mdl-radio__button" name="assassin-select" value="3">
+          <span class="mdl-radio__label">4</span>
+        </label>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="assassin-4">
+          <input type="radio" id="assassin-4" class="mdl-radio__button" name="assassin-select" value="4">
+          <span class="mdl-radio__label">5</span>
+        </label>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="assassin-5">
+          <input type="radio" id="assassin-5" class="mdl-radio__button" name="assassin-select" value="5">
+          <span class="mdl-radio__label">6</span>
+        </label>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="assassin-6">
+          <input type="radio" id="assassin-6" class="mdl-radio__button" name="assassin-select" value="6">
+          <span class="mdl-radio__label">7</span>
+        </label>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="assassin-7">
+          <input type="radio" id="assassin-7" class="mdl-radio__button" name="assassin-select" value="7">
+          <span class="mdl-radio__label">8</span>
+        </label>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="assassin-8">
+          <input type="radio" id="assassin-8" class="mdl-radio__button" name="assassin-select" value="8">
+          <span class="mdl-radio__label">9</span>
+        </label>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="assassin-9">
+          <input type="radio" id="assassin-9" class="mdl-radio__button" name="assassin-select" value="9">
+          <span class="mdl-radio__label">10</span>
+        </label>
+      </div>
+    </div>
+    <div class="mdl-layout-spacer"></div>
+    <button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect mdl-cell--bottom"
+            id="assassin-btn">
+      确定
+    </button>
+    <div></div>
+  </div>
 </div>
 
 <div style="height: 48px;"></div>
@@ -145,19 +201,5 @@
 {% endblock %}
 
 {% block script %}
-<!--<dialog class="mdl-dialog" hidden>
-  <div class="mdl-dialog__title">
-    <h5>我是提示...</h5>
-  </div>
-  <div class="mdl-dialog__content">
-    <p>
-      我是提示...
-    </p>
-  </div>
-  <div class="mdl-dialog__actions">
-    <button type="button" class="mdl-button close">确定</button>
-  </div>
-</dialog>-->
-
 <script src="/static/js/game.js?v=4"></script>
 {% endblock %}

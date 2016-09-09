@@ -41,7 +41,6 @@ $(document).ready(function() {
 
 function init() {
     $.get('/game/init', function(data) {
-        $('#message-box').append('<div>' + JSON.stringify(data) + '</div>');
         var content = data['content'];
         for (var i = 0; i < content.length; i += 1) content[i] += 1;
         info.role = data['role'];
@@ -50,6 +49,11 @@ function init() {
         info.player_num = data['player_num'];
         info.known_player = content
         $('.team-select').map(function() {
+            if (parseInt(this.value) >= info.player_num) {
+                $(this).parent().remove();
+            }
+        })
+        $('input[name="assassin-select"]').map(function() {
             if (parseInt(this.value) >= info.player_num) {
                 $(this).parent().remove();
             }
@@ -69,7 +73,7 @@ function comet() {
         if (data['type'] == 'message') {
             $('#message-box').append('<div>Player ' + (data['sender'] + 1) + ": " + data['content'] + '</div>');
         } else if (data['type'] == 'player_info') {
-            $('#message-box').append('<div>' + data['content'] + '</div>');
+            $('#message-box').append('<div>排序: ' + data['content'].join('，') + '</div>');
         } else if (data['type'] == 'register') {
             $('#message-box').append('<div>Player ' + (data['player_id'] + 1) + ": " + data['name'] + ' 已加入。</div>');
         } else if (data['type'] == 'make-team') {
@@ -78,7 +82,9 @@ function comet() {
         } else if (data['type'] == 'team-vote') {
             $('#make-team-panel').hide();
             $('#team-vote-panel').show();
-            $('#message-box').append(JSON.stringify(data));//
+            $('#message-box').append('<div>队伍人选: ' + data['content'].join('，') + '.</div>');//
+        } else if (data['type'] == 'team-result') {
+            $('#message-box').append('<div>投票结果: ' + data['content'].map(() => { return this == 1 ? '赞同' : '反对' ;}).join('，') + '.</div>');//
         } else if (data['type'] == 'task-vote') {
             $('#task-vote-panel').show();
         } else if (data['type'] == 'vote') {
@@ -86,6 +92,8 @@ function comet() {
         } else if (data['type'] == 'mission-result') {
             var res = data['result'] ? '成功' : '失败';
             $('#message-box').append('<div>任务' + res + '，' + data['bad_vote_num'] + ' 张失败票。</div>');
+        } else if (data['type'] == 'assassin') {
+            $('#assassin-panel').slideDown();
         } else if (data['type'] == 'end') {
             var c = '';
             if (data['result'] == true) { c = '好人获胜'; }
@@ -98,9 +106,9 @@ function comet() {
     })
 }
 
-function add_message(sender, content) {
-    $('#message-box').append('');
-}
+// function add_message(sender, content) {
+//     $('#message-box').append('');
+// }
 
 $('#make-team-btn').click(function() {
     $('#make-team-panel').slideUp();
@@ -132,10 +140,12 @@ $('#task-vote-btn').click(function() {
     });
 })
 
-$('#assassin').click(function() {
+$('#assassin-btn').click(function() {
+    $('#assassin-panel').slideUp();
+    target = $('input[name="assassin-select"]:checked').val();
     $.post('/game/action', {
         action: 'assasin',
-        content: []
+        content: target
     })
 })
 

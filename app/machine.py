@@ -255,10 +255,6 @@ class MachineControl(object):
         for i in player_list:
             self.get_mq(i).put_nowait(content)
     
-    def message(self, content):
-        content['type'] = 'message'
-        self.notify([], content)
-    
     def make_team(self, player_id, team_list):
         self.machine.make_team(team_list)
 
