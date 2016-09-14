@@ -103,7 +103,7 @@ function comet() {
         } else {
             $('#message-box').append('<div>' + JSON.stringify(data) + '</div>');
         }
-    })
+    });
 }
 
 // function add_message(sender, content) {
@@ -120,7 +120,7 @@ $('#make-team-btn').click(function() {
         action: 'make-team',
         content: JSON.stringify({ list: content })
     });
-})
+});
 
 $('#team-vote-btn').click(function() {
     $('#team-vote-panel').slideUp();
@@ -129,7 +129,7 @@ $('#team-vote-btn').click(function() {
         action: 'team-vote',
         content: vote
     });
-})
+});
 
 $('#task-vote-btn').click(function() {
     $('#task-vote-panel').slideUp();
@@ -138,7 +138,7 @@ $('#task-vote-btn').click(function() {
         action: 'task-vote',
         content: vote
     });
-})
+});
 
 $('#assassin-btn').click(function() {
     $('#assassin-panel').slideUp();
@@ -146,14 +146,14 @@ $('#assassin-btn').click(function() {
     $.post('/game/action', {
         action: 'assasin',
         content: target
-    })
-})
+    });
+});
 
 $('#info').click(function() {
     alert('我的身份：' + info.role_name + '\n\n'
         + '我的次序：' + info.player_id + '号\n\n'
         + '看到的玩家：'　+ info.known_player.join('，'));
-})
+});
 
 // Test
 $('#send-message').click(function() {
@@ -161,4 +161,5 @@ $('#send-message').click(function() {
         action: 'message',
         content: $('#message-content').val()
     });
-})
+    $('#message-content').val('');
+});
