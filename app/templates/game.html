@@ -10,6 +10,7 @@
   margin: 0;
 }
 </style>
+<link href="//cdn.bootcss.com/material-design-icons/3.0.1/iconfont/material-icons.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block header %}
@@ -190,14 +191,14 @@
 </div>
 
 <div style="height: 48px;"></div>
-<div class="mdl-grid mdl-shadow--2dp" style="position: fixed; left: 0; right: 0; bottom: 0; z-index: 1; height: 32px;">
+<div class="mdl-grid mdl-shadow--2dp mdl-color--white" style="position: fixed; left: 0; right: 0; bottom: 0; z-index: 1; height: 30px;">
   <div class="mdl-layout-spacer"></div>
-  <div class="mdl-cell--6-col">
-    <div class="mdl-textfield mdl-js-textfield" style="width: 100%; max-width: 600px; margin: -20px 0;">
+  <div class="mdl-cell--6-col mdl-grid" style="padding: 0;">
+    <div class="mdl-textfield mdl-js-textfield mdl-layout-spacer" style="max-width: 600px; margin: -20px 0;">
       <input class="mdl-textfield__input" type="text" id="message-content">
       <label class="mdl-textfield__label" for="message-content">Message...</label>
     </div>
-    <button class="mdl-button mdl-js-button mdl-button--icon" id="send-message" style="margin-top: -12px;"><i class="material-icons">send</i></button>
+    <button class="mdl-button mdl-js-button mdl-button--icon mdl-cell--middle" id="send-message"><i class="material-icons">send</i></button>
   </div>
   <div class="mdl-layout-spacer"></div>
 </div>
