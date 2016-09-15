@@ -205,5 +205,30 @@
 {% endblock %}
 
 {% block script %}
+  <button type="button" class="mdl-button show-modal">提示</button>
+  <dialog class="mdl-dialog">
+    <div class="mdl-dialog__content">
+      <p>
+        Allow this site to collect usage data to improve your experience?
+      </p>
+    </div>
+    <div class="mdl-dialog__actions">
+      <button type="button" class="mdl-button close">OK</button>
+    </div>
+  </dialog>
+  <script>
+    var dialog = document.querySelector('dialog');
+    var showModalButton = document.querySelector('.show-modal');
+    if (! dialog.showModal) {
+      dialogPolyfill.registerDialog(dialog);
+    }
+    showModalButton.addEventListener('click', function() {
+      dialog.showModal();
+    });
+    dialog.querySelector('.close').addEventListener('click', function() {
+      dialog.close();
+    });
+  </script>
+
 <script src="/static/js/game.js?v=4"></script>
 {% endblock %}

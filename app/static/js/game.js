@@ -163,3 +163,8 @@ $('#send-message').click(function() {
     });
     $('#message-content').val('');
 });
+
+function dialogNotify(content) {
+    $('.mdl-dialog__content').innerHTML(content);
+    $('mdl-dialog').showModal();
+}
