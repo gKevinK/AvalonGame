@@ -59,7 +59,7 @@ function init() {
             }
         })
         // $.parser.parse($('#make-team-field'));
-        alert('我的身份：' + info.role_name + '\n\n'
+        dialogNotify('我的身份：' + info.role_name + '\n\n'
             + '我的次序：' + info.player_id + '号\n\n'
             + '看到的玩家：'　+ info.known_player.join('，'));
     });
@@ -99,7 +99,7 @@ function comet() {
             if (data['result'] == true) { c = '好人获胜'; }
             else { c = '坏人获胜'; }
             c += data['roles'].map(function() { return config.Role[this]; });
-            alert(c);
+            dialogNotify(c);
         } else {
             $('#message-box').append('<div>' + JSON.stringify(data) + '</div>');
         }
@@ -150,7 +150,7 @@ $('#assassin-btn').click(function() {
 });
 
 $('#info').click(function() {
-    alert('我的身份：' + info.role_name + '\n\n'
+    dialogNotify('我的身份：' + info.role_name + '\n\n'
         + '我的次序：' + info.player_id + '号\n\n'
         + '看到的玩家：'　+ info.known_player.join('，'));
 });
@@ -165,6 +165,13 @@ $('#send-message').click(function() {
 });
 
 function dialogNotify(content) {
-    $('.mdl-dialog__content').innerHTML(content);
-    $('mdl-dialog').showModal();
+    $('.mdl-dialog__content').html(content);
+    $('#show-modal').avgrund({
+        width: '280',
+        height: $('.mdl-dialog').height(),
+        holderClass: 'mdl-dialog',
+        onBlurContainer: '.mdl-layout',
+        template: $('.mdl-dialog').html()
+    });
+    $('#show-modal').click();
 }
