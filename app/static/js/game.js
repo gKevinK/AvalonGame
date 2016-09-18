@@ -166,12 +166,11 @@ $('#send-message').click(function() {
 
 function dialogNotify(content) {
     $('.mdl-dialog__content').html(content);
-    $('#show-modal').avgrund({
+    $('#show-modal').unbind().avgrund({
         width: '280',
         height: $('.mdl-dialog').height(),
         holderClass: 'mdl-dialog',
         onBlurContainer: '.mdl-layout',
         template: $('.mdl-dialog').html()
-    });
-    $('#show-modal').click();
+    }).click();
 }
