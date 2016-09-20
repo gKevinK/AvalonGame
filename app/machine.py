@@ -61,8 +61,7 @@ class AvalonMachine(object):
         self.mission_result = [-1] * 5
 
         print("New game starting...")
-        for i in range(num):
-            print(i, self.players[i].name)
+        print([self.players[i].name for i in range(num)])
     
     def init_notify(self, player):
         content = []
