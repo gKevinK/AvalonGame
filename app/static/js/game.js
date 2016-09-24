@@ -25,21 +25,14 @@ var info = {
     mission_player_num: []
 }
 
-$('#exit').click(function() {
-    $.post('/exit', {
-        exit: true
-    }, function() {
-        window.location.href = '/';
-    });
-});
-
 $(document).ready(function() {
+    setTimeout(init, 100);
     $('.action-panel').hide();
     $('#action-panel-grid').show();
-    setTimeout(init, 100);
 });
 
 function init() {
+    setTimeout(comet, 10);
     $.get('/game/init', function(data) {
         var content = data['content'];
         for (var i = 0; i < content.length; i += 1) content[i] += 1;
@@ -58,17 +51,16 @@ function init() {
                 $(this).parent().remove();
             }
         })
-        // $.parser.parse($('#make-team-field'));
         dialogNotify('我的身份：' + info.role_name + '\n\n'
             + '我的次序：' + info.player_id + '号\n\n'
             + '看到的玩家：'　+ info.known_player.join('，'));
     });
-    setTimeout(comet, 10);
 };
 
 function comet() {
+    listening = true;
     $.get('/game/comet', function(data) {
-        setTimeout(comet, 10);
+        setTimeout(comet, 1);
         if (data == '') return;
         if (data['type'] == 'message') {
             $('#message-box').append('<div>Player ' + (data['sender'] + 1) + ": " + data['content'] + '</div>');
@@ -82,9 +74,9 @@ function comet() {
         } else if (data['type'] == 'team-vote') {
             $('#make-team-panel').hide();
             $('#team-vote-panel').show();
-            $('#message-box').append('<div>队伍人选: ' + data['content'].join('，') + '.</div>');//
+            $('#message-box').append('<div>队伍人选: ' + data['content'].map(function(i) { return i + 1; }).join('，') + '。</div>');
         } else if (data['type'] == 'team-result') {
-            $('#message-box').append('<div>投票结果: ' + data['content'].map(() => { return this == 1 ? '赞同' : '反对' ;}).join('，') + '.</div>');//
+            $('#message-box').append('<div>投票结果: ' + data['content'].map(function(i) { return i == 1 ? '赞同' : '反对'; }).join('，') + '.</div>');
         } else if (data['type'] == 'task-vote') {
             $('#task-vote-panel').show();
         } else if (data['type'] == 'vote') {
@@ -95,10 +87,8 @@ function comet() {
         } else if (data['type'] == 'assassin') {
             $('#assassin-panel').slideDown();
         } else if (data['type'] == 'end') {
-            var c = '';
-            if (data['result'] == true) { c = '好人获胜'; }
-            else { c = '坏人获胜'; }
-            c += data['roles'].map(function() { return config.Role[this]; });
+            var c = (data['result'] == true ? '好人获胜' : '坏人获胜');
+            c += data['roles'].map(function(i) { return config.Role[i]; });
             dialogNotify(c);
         } else {
             $('#message-box').append('<div>' + JSON.stringify(data) + '</div>');
@@ -106,9 +96,9 @@ function comet() {
     });
 }
 
-// function add_message(sender, content) {
-//     $('#message-box').append('');
-// }
+function add_message(sender, content) {
+    $('#message-box').append('');
+}
 
 $('#make-team-btn').click(function() {
     $('#make-team-panel').slideUp();
@@ -155,22 +145,31 @@ $('#info').click(function() {
         + '看到的玩家：'　+ info.known_player.join('，'));
 });
 
-// Test
 $('#send-message').click(function() {
+    if ($('#message-content').val() == '') return;
     $.post('/game/action', {
         action: 'message',
         content: $('#message-content').val()
     });
-    $('#message-content').val('');
+    $('#message-content').val(null);
 });
 
 function dialogNotify(content) {
-    $('.mdl-dialog__content').html(content);
-    $('#show-modal').unbind().avgrund({
-        width: '280',
-        height: $('.mdl-dialog').height(),
-        holderClass: 'mdl-dialog',
-        onBlurContainer: '.mdl-layout',
-        template: $('.mdl-dialog').html()
-    }).click();
+    alert(content);
+    // $('.mdl-dialog__content').html(content);
+    // $('#show-modal').unbind().avgrund({
+    //     width: '280',
+    //     height: $('.mdl-dialog').height(),
+    //     holderClass: 'mdl-dialog',
+    //     onBlurContainer: '.mdl-layout',
+    //     template: $('.mdl-dialog').html()
+    // }).click();
 }
+
+$('#exit').click(function() {
+    $.post('/exit', {
+        exit: true
+    }, function() {
+        window.location.href = '/';
+    });
+});

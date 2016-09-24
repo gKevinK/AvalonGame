@@ -152,4 +152,4 @@ def exit_game():
 app.secret_key = appconfig.SECRET_KEY
 
 if __name__ == '__main__':
-    app.run(debug=True, threaded=True)
+    app.run('0.0.0.0', debug=True, threaded=True)
